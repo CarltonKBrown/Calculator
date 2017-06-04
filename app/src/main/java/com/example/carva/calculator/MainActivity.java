@@ -6,6 +6,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Stack;
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
@@ -37,14 +39,19 @@ public class MainActivity extends AppCompatActivity {
 
     public void delBtn(View view){
         EditText input = (EditText) findViewById(R.id.entry);
+        EditText input2 = (EditText) findViewById(R.id.resultTxt);
         String txt = input.getText().toString();
+        String txt2 = input2.getText().toString();
         if(txt.matches("")) {
             Toast.makeText(this,"No entry",Toast.LENGTH_SHORT).show();
         }
         else {
             txt = txt.substring(0, txt.length()-1);
+            txt2 = txt;
             input.setText("");
             input.append(txt);
+            input2.setText("");
+            input2.append(txt);
         }
     }
     public void equalBtn(View view){
@@ -118,6 +125,114 @@ public class MainActivity extends AppCompatActivity {
     public void btn0(View   view){
         EditText input = (EditText) findViewById(R.id.entry);
         input.append("0");
+    }
+
+    public boolean checkOperator(String opt){
+        if (opt.equals("-")){
+            return true;
+        }
+        if (opt.equals("+")){
+            return true;
+        }
+        if (opt.equals("*")){
+            return true;
+        }
+        if (opt.equals("/")){
+            return true;
+        }
+        if (opt.equals("^")){
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isRightAssociative(String x){
+        if(x.equals("^") || x.equals("+") || x.equals("-") || x.equals("/") || x.equals("*")){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean isOperator(char input){
+        if(input=='-'||input=='+'||input=='/'||input=='*'||input=='^')
+        {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean zeroDiv(String input){
+        int cnt = 0;
+        for (int i = 0; i < input.length(); i++){
+            if(input.charAt(i) == '/'){
+                cnt = i;
+                break;
+            }
+        }
+        if(cnt!= 0 && input.charAt(cnt+1) == '0'){
+            return true;
+        }
+        return false;
+    }
+    public int getOperatorValue(String x){
+        int value = -1;
+        if(x.equals("+") || x.equals("-")){
+            value = 1;
+        }
+        if(x.equals("*") || x.equals("/")){
+            value = 2;
+        }
+
+        if(x.equals("^")){
+            value = 3;
+        }
+        return value;
+    }
+
+    void calcOperation(String input, Stack<Double> temp){
+        double left, right, result;
+        result = 0;
+        right = temp.pop();
+        left = temp.pop();
+        if (input == "-")
+        {
+            result = left - right;
+        }
+        if (input == "+")
+        {
+            result = left + right;
+        }
+        if (input == "*"){
+            result = left*right;
+        }
+        if (input == "/"){
+            result = left/right;
+        }
+        if (input == "^"){
+            result = Math.pow(left,right);
+        }
+        temp.push(result);
+    }
+
+    public boolean priority(String x, String y){
+        int value, value2;
+        value = getOperatorValue(x);
+        value2 = getOperatorValue(y);
+
+        if(value == value2){
+            if(true){
+                return false;
+            }
+            else{
+                return  true;
+            }
+        }
+        if(value > value2){
+            return  true;
+        }
+        else{
+            return false;
+        }
     }
 
 }
